@@ -1,5 +1,5 @@
 # Bootstrap 4 Layout Builder
-When it comes to building layouts, it can become quite furstrating. Not to mention if the layouts are kind of complex. That said, this light script allows you to easily create your own layouts based on Bootstrap 4 classes. To try it out, you can visit this following link: [Layout Builder Demo](https://mnhjddn.github.io/demo/layout-builder/).
+When it comes to building layouts, it can become quite furstrating. Not to mention if the layouts are kind of complex. That said, this light script allows you to easily create your own layouts based on Bootstrap 4 classes. To try it out, you can visit this following link: [Layout Builder Demo](https://mnhjddn.github.io/work.html?code=layout-builder).
 
 ## Prerequisite
 To use this script, you need to include the following libraries/framework:
