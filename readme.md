@@ -6,6 +6,7 @@ To use this script, you need to include the following libraries/framework:
 - JQuery (for Bootstrap 4)
 - Bootstrap 4
 - CKEditor (for the content editor)
+- FontAwesome
 
 ## How to Use
 Place the script mnhBuilder.js to your project directory then Link it to your html. Make sure you load after you have loaded the ones in prerequisite section:
