@@ -1,6 +1,15 @@
 class MnhBuilder {
 
-  static init = (targetDiv, addButton, mnhPageStructure) => {
+
+
+  static init = (data) => {
+
+    let mnhPageStructure = data.layout_data;
+    let targetDiv = data.container;
+    let addButton = data.add_button;
+    let codeButton = data.code_button;
+    let saveButton = data.save_button;
+    let loadButton = data.load_button;
 
     // Inject styles
     let styleString = `
@@ -50,15 +59,15 @@ class MnhBuilder {
         editorPanel.style.zIndex = "999";
         editorPanel.style.cursor = "pointer";
         editorPanel.innerHTML = `
-        <button id="remove-row-${index}" title="Hapus panel ini" class="btn btn-link text-danger btn-sm m-0 p-0"><i class="fa fa-fw fa-trash-alt"></i></button>
+        <button id="remove-row-${index}" title="Delete this panel" class="btn btn-link text-danger btn-sm m-0 p-0"><i class="fa fa-fw fa-trash-alt"></i></button>
         <button id="edit-classes-row-${index}" title="Edit Class" class="btn btn-link text-danger btn-sm m-0 p-0"><i class="fa fa-fw fa-cog"></i></button>
         <br/>
-        <button id="move-up-row-${index}" title="Pindahkan ke Atas" class="btn btn-link text-danger btn-sm m-0 p-0"><i class="fa fa-fw fa-arrow-up"></i></button>
-        <button id="move-down-row-${index}" title="Pindahkan ke Bawah" class="btn btn-link text-danger btn-sm m-0 p-0"><i class="fa fa-fw fa-arrow-down"></i></button>
+        <button id="move-up-row-${index}" title="Move up" class="btn btn-link text-danger btn-sm m-0 p-0"><i class="fa fa-fw fa-arrow-up"></i></button>
+        <button id="move-down-row-${index}" title="Move down" class="btn btn-link text-danger btn-sm m-0 p-0"><i class="fa fa-fw fa-arrow-down"></i></button>
         `;
 
         editorPanel.querySelector(`#remove-row-${index}`).onclick = () => {
-          if (confirm("Apakah Anda yakin ingin menghapus panel ini?")) {
+          if (confirm("Are you sure?")) {
             let newStructure = mnhPageStructure;
             newStructure.splice(index, 1);
             mnhPageStructure = newStructure;
@@ -68,7 +77,7 @@ class MnhBuilder {
 
         editorPanel.querySelector(`#move-up-row-${index}`).onclick = () => {
           if (index <= 0) {
-            alert("Posisi panel sudah berada di paling atas.");
+            alert("Panel can't be moved up.");
           } else {
             let temp = mnhPageStructure[index - 1];
             mnhPageStructure[index - 1] = mnhPageStructure[index];
@@ -79,7 +88,7 @@ class MnhBuilder {
 
         editorPanel.querySelector(`#move-down-row-${index}`).onclick = () => {
           if (index >= mnhPageStructure.length - 1) {
-            alert("Posisi panel sudah berada di paling bawah.");
+            alert("Panel can't be moved down.");
           } else {
             let temp = mnhPageStructure[index + 1];
             mnhPageStructure[index + 1] = mnhPageStructure[index];
@@ -91,7 +100,7 @@ class MnhBuilder {
         editorPanel.querySelector(`#edit-classes-row-${index}`).onclick = () => {
           // Parse classes to string
           let classes = mnhPageStructure[index].classes.join(" ");
-          let editedClasses = prompt("Masukkan class untuk panel ini:", classes);
+          let editedClasses = prompt("Add classes (separate by space):", classes);
           if (editedClasses) {
             let newClasses = editedClasses.split(" ");
             mnhPageStructure[index].classes = newClasses;
@@ -123,7 +132,7 @@ class MnhBuilder {
           if (!itemI.content || itemI.content.length < 1) {
             child.innerHTML = `
           <div class='text-center hoverable p-4 mt-2 mb-4 rounded-lg' style="color:gray; background-color:#e3e3e3">
-            <small>Kolom kosong</small>
+            <small>Empty Column</small>
           </div>
           `;
           }
@@ -138,9 +147,9 @@ class MnhBuilder {
                 <span class="bg-white shadow px-3 py-2 rounded-pill">
                  <small>
                   <a class="text-danger" id="edit-content-row-${index}-col-${indexI}-item-${indexJ}" title="Edit Konten" href="#"><i class="fa fa-fw fa-edit mx-1"></i></a>
-                  <a class="text-danger" id="move-up-content-row-${index}-col-${indexI}-item-${indexJ}" title="Pindahkan ke atas" href="#"><i class="fa fa-fw fa-arrow-up mx-1"></i></a>
-                  <a class="text-danger" id="move-down-content-row-${index}-col-${indexI}-item-${indexJ}" title="Pindahkan ke bawah" href="#"><i class="fa fa-fw fa-arrow-down mx-1"></i></a>
-                  <a class="text-danger" id="delete-content-row-${index}-col-${indexI}-item-${indexJ}" title="Hapus Konten" href="#"><i class="fa fa-fw fa-trash-alt mx-1"></i></a>
+                  <a class="text-danger" id="move-up-content-row-${index}-col-${indexI}-item-${indexJ}" title="Move up" href="#"><i class="fa fa-fw fa-arrow-up mx-1"></i></a>
+                  <a class="text-danger" id="move-down-content-row-${index}-col-${indexI}-item-${indexJ}" title="Move down" href="#"><i class="fa fa-fw fa-arrow-down mx-1"></i></a>
+                  <a class="text-danger" id="delete-content-row-${index}-col-${indexI}-item-${indexJ}" title="Delete content" href="#"><i class="fa fa-fw fa-trash-alt mx-1"></i></a>
                  </small>
                 </span>
               </div>
@@ -162,22 +171,22 @@ class MnhBuilder {
                   let addContent = contentEditor;
                   addContent.innerHTML = `
                     <div style="max-width:679px; width:100%" class="p-3 p-md-4 bg-white shadow rounded-lg">
-                    <h6>Masukkan detail gambar:</h6>
+                    <h6>Image Detail:</h6>
                     
                     <div class="my-4">
-                    <input type="text" value="${_toBeEdited.querySelector('img').getAttribute("src")}" id="editorImageURL" class="form-control form-control-sm mb-2" placeholder="URL Gambar (Contoh: https://example.com/gambar.jpg)" />
-                    <input type="text" value="${_toBeEdited.querySelector('img').getAttribute("alt")}" id="editorImageAlt" class="form-control form-control-sm mb-2" placeholder="Deskripsi gambar (Contoh: Logo Organisasi, Mitra Organsisasi, dll)" />
-                    <input type="text" value="${_toBeEdited.querySelector('a') ? _toBeEdited.querySelector('a').getAttribute("href") : ""}" id="editorImageHref" class="form-control form-control-sm mb-2" placeholder="Masukkan link ketika gambar diklik (Contoh: https://example.com)" />
-                    <input type="text" value="${_toBeEdited.querySelector('img').getAttribute("class")}" id="editorImageClass" class="form-control form-control-sm mb-2" placeholder="Class <img> (pisahkan dengan spasi) (Contoh: rounded-circle, w-100, dll)" />
-                    <input type="text" value="${_toBeEdited.querySelector('div').getAttribute("class")}" id="editorContainerClass" class="form-control form-control-sm mb-2" placeholder="Class <div> (pisahkan dengan spasi) (Contoh: text-center, bg-dark, dll)" />
+                    <input type="text" value="${_toBeEdited.querySelector('img').getAttribute("src")}" id="editorImageURL" class="form-control form-control-sm mb-2" placeholder="URL (Example: https://example.com/gambar.jpg)" />
+                    <input type="text" value="${_toBeEdited.querySelector('img').getAttribute("alt")}" id="editorImageAlt" class="form-control form-control-sm mb-2" placeholder="Description (Example: Organization Name)" />
+                    <input type="text" value="${_toBeEdited.querySelector('a') ? _toBeEdited.querySelector('a').getAttribute("href") : ""}" id="editorImageHref" class="form-control form-control-sm mb-2" placeholder="Hyperlink (Example: https://example.com)" />
+                    <input type="text" value="${_toBeEdited.querySelector('img').getAttribute("class")}" id="editorImageClass" class="form-control form-control-sm mb-2" placeholder="Classes for <img> (separate with space) (Example: rounded-circle, w-100, dll)" />
+                    <input type="text" value="${_toBeEdited.querySelector('div').getAttribute("class")}" id="editorContainerClass" class="form-control form-control-sm mb-2" placeholder="Classes for <div> (separate with space) (Example: text-center, bg-dark, dll)" />
                     </div>
           
                     <hr/>
-                    <h6>Pratinjau kode:</h6>
+                    <h6>Code Preview:</h6>
                     <pre id="editorImageCodePreview"></pre>
           
                     <div class="text-center pt-3">
-                      <button class="btn btn-danger rounded-pill px-3 btn-sm" id="contentEditorFormSave">Simpan Konten</button>
+                      <button class="btn btn-danger rounded-pill px-3 btn-sm" id="contentEditorFormSave">Save Content</button>
                       <a href="#" class="btn btn-link btn-sm text-danger" id="contentEditorFormCancel">Cancel</a>
                     </div>
                     </div>
@@ -185,12 +194,12 @@ class MnhBuilder {
 
                   let updateCodePreview = () => {
                     addContent.querySelector("#editorImageCodePreview").textContent = `<div data-type="img" class="${addContent.querySelector("#editorContainerClass").value}">
-    ${addContent.querySelector("#editorImageHref").value ? `<a href="${addContent.querySelector("#editorImageHref").value}">` : ""}<img 
-      src="${addContent.querySelector("#editorImageURL").value}" 
-      alt="${addContent.querySelector("#editorImageAlt").value}" 
-      class="${addContent.querySelector("#editorImageClass").value}" 
-    />${addContent.querySelector("#editorImageHref").value ? `</a>` : ""}
-  </div>`;
+                      ${addContent.querySelector("#editorImageHref").value ? `<a href="${addContent.querySelector("#editorImageHref").value}">` : ""}<img 
+                        src="${addContent.querySelector("#editorImageURL").value}" 
+                        alt="${addContent.querySelector("#editorImageAlt").value}" 
+                        class="${addContent.querySelector("#editorImageClass").value}" 
+                      />${addContent.querySelector("#editorImageHref").value ? `</a>` : ""}
+                    </div>`;
                   }
 
                   updateCodePreview();
@@ -211,7 +220,7 @@ class MnhBuilder {
                       renderPreview();
                       document.querySelector("#contentEditorForm").remove();
                     } else {
-                      alert("URL dan deskripsi Gambar harus diisi!");
+                      alert("URL and description must not be empty");
                     }
                   }
                   addContent.querySelector("#contentEditorFormCancel").onclick = () => {
@@ -226,7 +235,7 @@ class MnhBuilder {
                   <div style="max-width:679px; width:100%" class="p-3 p-md-4 bg-white shadow rounded-lg">
                     <textarea name="ckeditor">${mnhPageStructure[index].cols[indexI].content[indexJ]}</textarea>
                     <div class="text-center pt-3">
-                      <button class="btn btn-danger rounded-pill px-3 btn-sm" id="contentEditorFormSave">Simpan Konten</button>
+                      <button class="btn btn-danger rounded-pill px-3 btn-sm" id="contentEditorFormSave">Save Content</button>
                       <a href="#" class="btn btn-link btn-sm text-danger" id="contentEditorFormCancel">Cancel</a>
                     </div>
                   </div>
@@ -249,7 +258,7 @@ class MnhBuilder {
               });
 
               _content.querySelector(`#delete-content-row-${index}-col-${indexI}-item-${indexJ}`).addEventListener("click", () => {
-                if (confirm("Apakah Anda yakin ingin menghapus konten ini?")) {
+                if (confirm("Are you sure?")) {
                   mnhPageStructure[index].cols[indexI].content.splice(indexJ, 1);
                   renderPreview();
                 }
@@ -257,7 +266,7 @@ class MnhBuilder {
 
               _content.querySelector(`#move-up-content-row-${index}-col-${indexI}-item-${indexJ}`).addEventListener("click", () => {
                 if (indexJ <= 0) {
-                  alert("Posisi konten sudah berada di paling atas.");
+                  alert("Content can't be moved up");
                 } else {
                   let temp = mnhPageStructure[index].cols[indexI].content[indexJ - 1];
                   mnhPageStructure[index].cols[indexI].content[indexJ - 1] = mnhPageStructure[index].cols[indexI].content[indexJ];
@@ -268,7 +277,7 @@ class MnhBuilder {
 
               _content.querySelector(`#move-down-content-row-${index}-col-${indexI}-item-${indexJ}`).addEventListener("click", () => {
                 if (indexJ >= mnhPageStructure[index].cols[indexI].content.length - 1) {
-                  alert("Posisi konten sudah berada di paling bawah.");
+                  alert("Content can't be moved down.");
                 } else {
                   let temp = mnhPageStructure[index].cols[indexI].content[indexJ + 1];
                   mnhPageStructure[index].cols[indexI].content[indexJ + 1] = mnhPageStructure[index].cols[indexI].content[indexJ];
@@ -294,8 +303,8 @@ class MnhBuilder {
           colOptions.innerHTML = `
           <div class="pb-1 px-3 rounded-pill bg-danger shadow">
            <small>
-           <a title="Tambah Konten" class="text-white mx-1" id="add-content-row-${index}-col-${indexI}" href="#"><i class="fa fa-fw fa-align-left"></i></a>
-           <a title="Tambah Gambar" class="text-white mx-1" id="add-img-row-${index}-col-${indexI}" href="#"><i class="fa fa-fw fa-images"></i></a>
+           <a title="Add Content" class="text-white mx-1" id="add-content-row-${index}-col-${indexI}" href="#"><i class="fa fa-fw fa-align-left"></i></a>
+           <a title="Add Image" class="text-white mx-1" id="add-img-row-${index}-col-${indexI}" href="#"><i class="fa fa-fw fa-images"></i></a>
            <a title="Edit Class" class="text-white mx-1" id="modify-class-row-${index}-col-${indexI}" href="#"><i class="fa fa-fw fa-cog"></i></a>
            </small>
           </div>
@@ -317,7 +326,7 @@ class MnhBuilder {
             <div style="max-width:679px; width:100%" class="p-3 p-md-4 bg-white shadow rounded-lg">
             <textarea name="ckeditor"></textarea>
             <div class="text-center pt-3">
-              <button class="btn btn-danger rounded-pill px-3 btn-sm" id="contentEditorFormSave">Simpan Konten</button>
+              <button class="btn btn-danger rounded-pill px-3 btn-sm" id="contentEditorFormSave">Save Content</button>
               <a href="#" class="btn btn-link btn-sm text-danger" id="contentEditorFormCancel">Cancel</a>
             </div>
             </div>
@@ -341,22 +350,22 @@ class MnhBuilder {
             let addContent = contentEditor;
             addContent.innerHTML = `
             <div style="max-width:679px; width:100%" class="p-3 p-md-4 bg-white shadow rounded-lg">
-            <h6>Masukkan detail gambar:</h6>
+            <h6>Image Detail:</h6>
             
             <div class="my-4">
-            <input type="text" id="editorImageURL" class="form-control form-control-sm mb-2" placeholder="URL Gambar (Contoh: https://example.com/gambar.jpg)" />
-            <input type="text" id="editorImageAlt" class="form-control form-control-sm mb-2" placeholder="Deskripsi gambar (Contoh: Logo Organisasi, Mitra Organsisasi, dll)" />
-            <input type="text" id="editorImageHref" class="form-control form-control-sm mb-2" placeholder="Masukkan link ketika gambar diklik (Contoh: https://example.com)" />
-            <input type="text" id="editorImageClass" class="form-control form-control-sm mb-2" placeholder="Class <img> (pisahkan dengan spasi) (Contoh: rounded-circle, w-100, dll)" />
-            <input type="text" id="editorContainerClass" class="form-control form-control-sm mb-2" placeholder="Class <div> (pisahkan dengan spasi) (Contoh: text-center, bg-dark, dll)" />
+            <input type="text" id="editorImageURL" class="form-control form-control-sm mb-2" placeholder="URL (Example: https://example.com/gambar.jpg)" />
+            <input type="text" id="editorImageAlt" class="form-control form-control-sm mb-2" placeholder="Description (Example: Organization Name)" />
+            <input type="text" id="editorImageHref" class="form-control form-control-sm mb-2" placeholder="Hyperlink (Example: https://example.com)" />
+            <input type="text" id="editorImageClass" class="form-control form-control-sm mb-2" placeholder="Classes for <img> (separate with space) (Example: rounded-circle, w-100, dll)" />
+            <input type="text" id="editorContainerClass" class="form-control form-control-sm mb-2" placeholder="Classes for <div> (separate with space) (Example: text-center, bg-dark, dll)" />
             </div>
   
             <hr/>
-            <h6>Pratinjau kode:</h6>
+            <h6>Code Preview:</h6>
             <pre id="editorImageCodePreview"></pre>
   
             <div class="text-center pt-3">
-              <button class="btn btn-danger rounded-pill px-3 btn-sm" id="contentEditorFormSave">Simpan Konten</button>
+              <button class="btn btn-danger rounded-pill px-3 btn-sm" id="contentEditorFormSave">Save Content</button>
               <a href="#" class="btn btn-link btn-sm text-danger" id="contentEditorFormCancel">Cancel</a>
             </div>
             </div>
@@ -387,7 +396,7 @@ class MnhBuilder {
                 renderPreview();
                 document.querySelector("#contentEditorForm").remove();
               } else {
-                alert("URL dan deskripsi Gambar harus diisi!");
+                alert("URL and description must not be empty");
               }
             }
             addContent.querySelector("#contentEditorFormCancel").onclick = () => {
@@ -400,7 +409,7 @@ class MnhBuilder {
           // #region Modify classes of current column
           colOptions.querySelector(`#modify-class-row-${index}-col-${indexI}`).addEventListener("click", () => {
             let classes = mnhPageStructure[index].cols[indexI].classes.join(" ");
-            let editedClasses = prompt("Masukkan class untuk kolom ini:", classes);
+            let editedClasses = prompt("Add classes for this column (separate with spaces):", classes);
             if (editedClasses) {
               let newClasses = editedClasses.split(" ");
               mnhPageStructure[index].cols[indexI].classes = newClasses;
@@ -417,11 +426,11 @@ class MnhBuilder {
     }
 
     document.querySelector(`#${addButton}`).onclick = () => {
-      let cols = prompt("Masukkan jumlah kolom: (Contoh: 1/2/3/4)");
+      let cols = prompt("Add column: (Example: 1/2/3/4)");
       let colCount = parseInt(cols);
       if (colCount) {
         if (colCount < 1 || colCount > 4) {
-          alert('Jumlah kolom yang valid adalah 1, 2, 3, dan 4');
+          alert('Please select one of these: 1, 2, 3, 4');
         } else {
 
           let addedColumns = [];
@@ -491,6 +500,98 @@ class MnhBuilder {
           mnhPageStructure.push(row);
           renderPreview();
         }
+      }
+    }
+
+    if (saveButton) {
+      document.querySelector(`#${saveButton}`).onclick = () => {
+        let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(mnhPageStructure));
+        let downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "my_layout.json");
+        document.body.appendChild(downloadAnchorNode); // required for firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+      }
+    }
+
+    if (loadButton) {
+      document.querySelector(`#${loadButton}`).onclick = () => {
+        let fileOpener = document.createElement('input');
+        fileOpener.type = 'file';
+
+        if (fileOpener && document.createEvent) {
+          let evt = document.createEvent("MouseEvents");
+          evt.initEvent("click", true, false);
+          fileOpener.dispatchEvent(evt);
+        }
+
+        fileOpener.onchange = () => {
+          let file = fileOpener.files[0];
+          if (file) {
+
+            let reader = new FileReader();
+            reader.readAsText(file, "UTF-8");
+            reader.onload = function (evt) {
+              mnhPageStructure = JSON.parse(evt.target.result);
+              renderPreview();
+            }
+            reader.onerror = function (evt) {
+              alert('Error reading file')
+            }
+
+
+            fileOpener.remove();
+          }
+        }
+      }
+    }
+
+    if (codeButton) {
+      document.querySelector(`#${codeButton}`).onclick = () => {
+        let htmlCode = '';
+        mnhPageStructure.forEach(rows => {
+          let rowText = `<div class="${rows.classes.join(" ")}">`;
+
+          let columnText = '';
+          rows.cols.forEach(cols => {
+
+            let colContents = '';
+            cols.content.forEach(contents => {
+              let div = document.createElement('div');
+              div.innerHTML = contents;
+              colContents += div.querySelector('div').innerHTML;
+              div.remove();
+            });
+
+            columnText += `<div class="${cols.classes.join(" ")}">${colContents}</div>`;
+          });
+
+          rowText += `${columnText}</div>`;
+
+          htmlCode += rowText;
+        });
+
+        /* Save to clipboard */
+        const el = document.createElement('textarea');
+        el.value = htmlCode;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        const selected =
+          document.getSelection().rangeCount > 0
+            ? document.getSelection().getRangeAt(0)
+            : false;
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        if (selected) {
+          document.getSelection().removeAllRanges();
+          document.getSelection().addRange(selected);
+        }
+
+        alert("The HTML code has been copied to your clipboard")
       }
     }
 

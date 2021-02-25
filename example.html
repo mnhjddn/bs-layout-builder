@@ -4,7 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bootstrap 4 Simple Layout Builder</title>
+  <title>MnhBuilder - Simple Builder for Bootstrap 4</title>
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
+
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
   <script src="https://kit.fontawesome.com/b609fdf428.js" crossorigin="anonymous"></script>
@@ -15,20 +19,36 @@
 
 <body>
 
-  <div class="container py-5">
-    <div class="text-center">
-      <h4>Bootstrap 4 Builder</h4>
-      <a href="https://github.com/mnhjddn/bs-layout-builder" class="btn btn-danger rounded-pill px-4 my-3"><i
-          class="fab fa-github mr-2"></i>Download from Github</a>
+  <div class="container pt-3 pb-5">
+    <div class="d-flex align-items-center">
+      <div class="border-right pr-4 mr-3 d-flex align-items-center">
+        <i class="fab fa-bootstrap mr-2 text-danger fa-3x"></i>
+        <div class="pl-2">
+          <h6 class="mb-0">MnhBuilder 1.2.0</h6>
+          <small>BS4 Layout Builder</small>
+        </div>
+      </div>
+      <button id="loadJSON" class="text-decoration-none btn btn-sm btn-link mr-2 text-dark" title="Load JSON"><i
+          class="fa fa-folder-open text-warning mr-2"></i>Load</button>
+      <button id="saveJSON" class="text-decoration-none btn btn-sm btn-link text-dark" title="Save JSON"><i
+          class="fa fa-save text-primary mr-2"></i>Save</button>
+      <button id="getCode" class="text-decoration-none btn btn-sm btn-link text-dark" title="Get HTML Code"><i
+          class="fa fa-code text-success mr-2"></i>Get Code</button>
     </div>
     <hr>
     <div id="builderPreview"></div>
-    <div class="text-center mt-3">
-      <button id="addPanel" class="btn btn-sm btn-link text-danger"><i class="fa fa-fw fa-plus-circle mr-2"></i>Tambah
-        Panel</button>
+    <div class="text-center mt-2">
+      <button id="addPanel" class="text-decoration-none btn btn-sm btn-link text-dark"><i
+          class="fa fa-fw fa-plus mr-2 text-danger"></i>Add Panel</button>
     </div>
   </div>
+  
 
+  <!-- Github link -->
+  <a class="github-fork-ribbon" href="https://github.com/mnhjddn/bs-layout-builder" data-ribbon="Fork me on GitHub"
+    title="Fork me on GitHub">Fork me on GitHub</a>
+
+  <!-- Dependencies -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
     integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
     crossorigin="anonymous"></script>
@@ -38,16 +58,25 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
     integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
     crossorigin="anonymous"></script>
-
   <script src="https://cdn.ckeditor.com/4.15.0/standard/ckeditor.js"></script>
 
-  <script src="mnhBuilder.js"></script>
+  <!-- MnhBuilder -->
+  <script src="dist/mnhBuilder.min.js"></script>
 
   <script>
 
     // Initial Page Structure
     let pageStructure = [];
-    MnhBuilder.init('builderPreview', 'addPanel', pageStructure);
+
+    MnhBuilder.init({
+      layout_data: pageStructure, 
+      container: 'builderPreview', 
+      add_button: 'addPanel',
+      save_button: 'saveJSON',
+      load_button: 'loadJSON',
+      code_button: 'getCode'
+    });
+
   </script>
 
 </body>
